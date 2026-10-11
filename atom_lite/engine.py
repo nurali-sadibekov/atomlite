@@ -377,6 +377,8 @@ def run_single_gulp(lat, gin_path, got_path, gulp_executable):
                 [os.fspath(gulp_executable)], stdin=gulp_input, stdout=gulp_output,
                 stderr=subprocess.STDOUT, cwd=APP_ROOT, check=False,
                 timeout=GULP_TIMEOUT_SECONDS,
+                creationflags=(getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                               if os.name == "nt" else 0),
             )
         except subprocess.TimeoutExpired as exc:
             raise RuntimeError(
