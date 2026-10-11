@@ -1,10 +1,10 @@
-Atom Lite portable build
+﻿AtomLite portable build
 
 Portable folder use:
 
 1. Keep the entire folder together when moving the app to another computer.
 2. Set GULP_PATH in settings.txt to the location of that computer's gulp.exe.
-3. Run "Atom Lite.exe". Python does not need to be installed on the target PC.
+3. Run "AtomLite.exe". Python does not need to be installed on the target PC.
 
 For a guided installation, use AtomLite-Setup.exe instead. The installer asks
 for the installation location and validates the selected gulp.exe itself.

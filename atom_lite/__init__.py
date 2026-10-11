@@ -1,2 +1,2 @@
-"""Atom Lite application package."""
+"""AtomLite application package."""
 

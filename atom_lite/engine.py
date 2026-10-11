@@ -4,6 +4,7 @@ import math
 import os
 import re
 import shlex
+import shutil
 import subprocess
 from decimal import Decimal, InvalidOperation
 
@@ -308,11 +309,14 @@ def get_template_initial_values(template_path, data_path, model):
 
 def make_gin(element, gin_path):
     """Create a rock salt MO input file if one does not already exist."""
-    try:
-        library_path = os.path.relpath(LIBRARY_PATH, APP_ROOT).replace(os.sep, "/")
-    except ValueError:
-        # The install and resource folders may be on separate Windows drives.
-        library_path = LIBRARY_PATH.as_posix()
+    # Keep the directive space-free: GULP splits unquoted library filenames.
+    # Stage the bundled library under the app's working directory so this works
+    # even when the installation path (or username) contains spaces.
+    gulp_library = APP_ROOT / "assets" / "bush.lib"
+    if LIBRARY_PATH.resolve() != gulp_library.resolve():
+        gulp_library.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(LIBRARY_PATH, gulp_library)
+    library_path = "assets/bush.lib"
     snapshot_path = (SNAPSHOT_DIR / f"{element.lower()}o.cif").relative_to(APP_ROOT).as_posix()
     if os.path.exists(gin_path):
         with open(gin_path, "r", encoding="utf-8") as existing:

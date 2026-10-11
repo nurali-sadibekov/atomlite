@@ -1,4 +1,4 @@
-"""Compatibility entry point. Use app.py or start.bat to launch Atom Lite."""
+"""Compatibility entry point. Use app.py or start.bat to launch AtomLite."""
 
 from atom_lite.ui import main
 

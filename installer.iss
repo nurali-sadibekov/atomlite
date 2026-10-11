@@ -1,20 +1,20 @@
-#define AppName "Atom Lite"
+#define AppName "AtomLite"
 #define AppVersion "1.0.0"
-#define AppPublisher "Atom Lite"
+#define AppPublisher "AtomLite"
 
 [Setup]
 AppId={{B584CCCB-7A25-4F06-A7AF-8C775394E26A}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
-DefaultDirName={localappdata}\Programs\Atom Lite
+DefaultDirName={localappdata}\Programs\AtomLite
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=dist
 OutputBaseFilename=AtomLite-Setup
 SetupIconFile=assets\app.ico
-UninstallDisplayIcon={app}\Atom Lite.exe
+UninstallDisplayIcon={app}\AtomLite.exe
 WizardStyle=modern
 Compression=lzma2
 SolidCompression=yes
@@ -28,18 +28,23 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "{localappdata}\AtomLite"; Flags: uninsneveruninstall
 
 [Files]
-Source: "dist\Atom Lite\Atom Lite.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\Atom Lite\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\AtomLite\AtomLite.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\AtomLite\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[InstallDelete]
+Type: files; Name: "{app}\Atom Lite.exe"
+Type: files; Name: "{autoprograms}\Atom Lite.lnk"
+Type: files; Name: "{autodesktop}\Atom Lite.lnk"
 
 [Icons]
-Name: "{autoprograms}\Atom Lite"; Filename: "{app}\Atom Lite.exe"; WorkingDir: "{app}"
-Name: "{autodesktop}\Atom Lite"; Filename: "{app}\Atom Lite.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{autoprograms}\AtomLite"; Filename: "{app}\AtomLite.exe"; WorkingDir: "{app}"
+Name: "{autodesktop}\AtomLite"; Filename: "{app}\AtomLite.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: unchecked
 
 [Run]
-Filename: "{app}\Atom Lite.exe"; Description: "Launch Atom Lite"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\AtomLite.exe"; Description: "Launch AtomLite"; Flags: postinstall nowait skipifsilent
 
 [Code]
 var
@@ -51,7 +56,7 @@ begin
   GulpPage := CreateInputFilePage(wpSelectDir,
     'GULP executable',
     'Select the GULP executable for this computer.',
-    'Atom Lite requires GULP. Browse to the licensed gulp.exe file to continue.');
+    'AtomLite requires GULP. Browse to the licensed gulp.exe file to continue.');
   GulpPage.Add('GULP executable (gulp.exe):',
     'GULP executable|gulp.exe|Executable files|*.exe|All files|*.*', '.exe');
 end;

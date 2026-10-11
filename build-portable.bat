@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 cd /d "%~dp0"
 
@@ -54,20 +54,20 @@ if errorlevel 1 (
 )
 
 if not exist "%~dp0build\spec" mkdir "%~dp0build\spec"
-"%BUILD_PYTHON%" -m PyInstaller --noconfirm --clean --onedir --windowed --name "Atom Lite" --icon "%~dp0assets\app.ico" --add-data "%~dp0assets;assets" --collect-all customtkinter --distpath "%~dp0dist" --workpath "%~dp0build\pyinstaller" --specpath "%~dp0build\spec" "%~dp0app.py"
+"%BUILD_PYTHON%" -m PyInstaller --noconfirm --clean --onedir --windowed --name "AtomLite" --icon "%~dp0assets\app.ico" --add-data "%~dp0assets;assets" --collect-all customtkinter --distpath "%~dp0dist" --workpath "%~dp0build\pyinstaller" --specpath "%~dp0build\spec" "%~dp0app.py"
 if errorlevel 1 (
     echo Portable build failed. Review the PyInstaller output above.
     pause
     exit /b 1
 )
 
-set "PORTABLE_DIR=%~dp0dist\Atom Lite"
+set "PORTABLE_DIR=%~dp0dist\AtomLite"
 if not exist "%PORTABLE_DIR%\settings.txt" copy "%~dp0settings.example.txt" "%PORTABLE_DIR%\settings.txt" >nul
 type nul > "%PORTABLE_DIR%\portable.mode"
 for %%D in (inputs outputs results snapshots) do if not exist "%PORTABLE_DIR%\data\%%D" mkdir "%PORTABLE_DIR%\data\%%D"
 if not exist "%PORTABLE_DIR%\logs" mkdir "%PORTABLE_DIR%\logs"
 copy "%~dp0README-PORTABLE.txt" "%PORTABLE_DIR%\README.txt" >nul
-set "PORTABLE_ZIP=%~dp0dist\Atom-Lite-portable.zip"
+set "PORTABLE_ZIP=%~dp0dist\AtomLite-portable.zip"
 powershell.exe -NoProfile -Command "Compress-Archive -Path $env:PORTABLE_DIR -DestinationPath $env:PORTABLE_ZIP -Force"
 if errorlevel 1 (
     echo Could not create the portable ZIP archive.
@@ -80,7 +80,7 @@ echo Portable app created at:
 echo %PORTABLE_DIR%
 echo Portable ZIP created at:
 echo %PORTABLE_ZIP%
-echo Edit settings.txt there to set GULP_PATH, then run "Atom Lite.exe".
+echo Edit settings.txt there to set GULP_PATH, then run "AtomLite.exe".
 pause
 goto :eof
 

@@ -1,6 +1,6 @@
-﻿# Atom Lite
+﻿# AtomLite
 
-Atom Lite generates GULP input for rock salt oxides, runs volume scans, fits an
+AtomLite generates GULP input for rock salt oxides, runs volume scans, fits an
 equation of state, and displays the fitted graph and crystal structure.
 
 ## Run from source on Windows
@@ -18,7 +18,7 @@ computer-specific paths. App assets use paths relative to the project folder.
 ## Project layout
 
 ```text
-app.py                  Application entry point
+app.py                  AtomLite application entry point
 atom_lite/              UI, calculation engine, and settings
 assets/                 Logo, icon, fonts, GULP library, and fit templates
 data/                   Sample structures and local calculation data
@@ -45,12 +45,11 @@ dependencies there. The target computer does not need Python or Tcl/Tk.
 ### Portable folder and ZIP
 
 1. Run `build-portable.bat`.
-2. Find the build at `dist/Atom Lite/` and the ZIP at
-   `dist/Atom-Lite-portable.zip`.
-3. Copy and extract the ZIP on the target computer. Keep the extracted `Atom
-   Lite` folder together.
-4. Edit `settings.txt` beside `Atom Lite.exe` and set `GULP_PATH` to that
-   computer's licensed `gulp.exe`, then launch `Atom Lite.exe`.
+2. Find the build at `dist/AtomLite/` and the ZIP at
+   `dist/AtomLite-portable.zip`.
+3. Copy and extract the ZIP on the target computer. Keep the extracted `AtomLite` folder together.
+4. Edit `settings.txt` beside `AtomLite.exe` and set `GULP_PATH` to that
+   computer's licensed `gulp.exe`, then launch `AtomLite.exe`.
 
 The portable app keeps generated inputs, outputs, results, structures, and
 logs inside its folder. GULP is not included and must be available separately.
@@ -63,7 +62,7 @@ logs inside its folder. GULP is not included and must be available separately.
 3. Run that setup file on the target computer, choose the installation
    location, and browse to its licensed `gulp.exe`. Setup will not continue
    unless the selected file exists and is named `gulp.exe`.
-4. Launch Atom Lite from the Start menu or optional desktop shortcut.
+4. Launch AtomLite from the Start menu or optional desktop shortcut.
 
 The installer saves the GULP path in
 `%LOCALAPPDATA%\AtomLite\settings.txt`, so no manual configuration is needed

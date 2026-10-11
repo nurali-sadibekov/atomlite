@@ -1,4 +1,4 @@
-"""CustomTkinter interface for Atom Lite."""
+"""CustomTkinter interface for AtomLite."""
 
 import math
 import logging
@@ -67,7 +67,7 @@ def _set_default_tk_font(root):
 class GulpChatApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Atom Lite")
+        self.root.title("AtomLite")
         self.root.geometry("1100x760")
         self.root.minsize(900, 620)
         self.root.configure(fg_color="#ffffff")
@@ -764,7 +764,7 @@ def main():
             try:
                 import ctypes
                 ctypes.windll.user32.MessageBoxW(
-                    None, message, "Atom Lite could not start", 0x10 | 0x10000 | 0x40000
+                    None, message, "AtomLite could not start", 0x10 | 0x10000 | 0x40000
                 )
             except Exception:
                 print(message, file=sys.stderr)

@@ -1,4 +1,4 @@
-"""Atom Lite application entry point with startup diagnostics."""
+"""AtomLite application entry point with startup diagnostics."""
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
         main()
     except Exception as exc:
-        logging.exception("Atom Lite failed during startup")
+        logging.exception("AtomLite failed during startup")
         messagebox.showerror(
-            "Atom Lite could not start",
+            "AtomLite could not start",
             f"The app encountered a startup error. Details are in {LOG_DIR / 'app.log'}.\n\n{exc}",
         )
