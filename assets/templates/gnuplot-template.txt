@@ -1,0 +1,12 @@
+# Gnuplot graph commands. One command per line.
+# DATA_FILE is replaced with the active result file path.
+# OUTPUT_FILE is replaced with the generated graph image path.
+set terminal pngcairo enhanced size 900,520 background rgb 'white'
+set output 'OUTPUT_FILE'
+set title 'Energy vs Volume'
+set xlabel 'Volume (Angstrom^3)'
+set ylabel 'Energy (eV/unit cell)'
+set grid
+set key top right
+plot 'DATA_FILE' using 2:3 with points pointtype 7 pointsize 1.3 linecolor rgb '#126213' title 'Data'
+unset output

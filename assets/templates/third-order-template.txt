@@ -1,0 +1,16 @@
+# Gnuplot third-order polynomial fit. DATA_FILE and OUTPUT_FILE are substituted per run.
+set terminal pngcairo enhanced size 900,520 background rgb 'white'
+set output 'OUTPUT_FILE'
+set title 'Third-order fit: energy vs volume'
+set xlabel 'Volume (Angstrom^3)'
+set ylabel 'Energy (eV/unit cell)'
+set grid
+f(x) = a*x**3 + b*x**2 + c*x + d
+a = INITIAL_A
+b = INITIAL_B
+c = INITIAL_C
+d = INITIAL_D
+fit f(x) 'DATA_FILE' using 2:3 via a,b,c,d
+set label 1 sprintf('E(V) = %.15f V^3 %+.15f V^2 %+.15f V %+.15f', a, b, c, d) at graph 0.03,0.95
+plot 'DATA_FILE' using 2:3 with points pointtype 7 pointsize 1.3 linecolor rgb '#126213' title 'Data', f(x) with lines linecolor rgb '#dc2626' title 'Fit'
+unset output

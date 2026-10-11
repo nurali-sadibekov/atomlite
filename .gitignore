@@ -1,0 +1,16 @@
+.venv/
+.build-venv/
+build/
+dist/
+runtime/
+__pycache__/
+*.py[cod]
+logs/
+settings.txt
+startup-error.log
+*.spec
+
+# Per-machine GULP input and generated calculation data.
+data/inputs/
+data/outputs/
+data/results/

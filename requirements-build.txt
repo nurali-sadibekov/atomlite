@@ -1,0 +1,3 @@
+# Install runtime dependencies and the Windows packaging tool.
+-r requirements.txt
+pyinstaller>=6.19,<7
