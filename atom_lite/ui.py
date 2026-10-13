@@ -73,7 +73,7 @@ class GulpChatApp:
         self.root.configure(fg_color="#ffffff")
         _set_default_tk_font(root)
         self.latest_plot = None
-        self.selected_model = "Quadratic"
+        self.selected_model = "Third-Order Birch-Murnaghan EOS"
         self.progress_bar = ctk.CTkProgressBar(
             root, mode="indeterminate", progress_color="#126213"
         )
@@ -516,7 +516,13 @@ class GulpChatApp:
                 end_lat = float(self.inputs["Ending lattice constant"].get())
                 latitudes = lattice_values(start_lat, end_lat, step)
             start_lat, end_lat = latitudes[0], latitudes[-1]
-            minimum = {"Linear": 2, "Quadratic": 3, "Third order": 4, "Murnaghan EOS": 4}[model]
+            minimum = {
+                "Linear": 2,
+                "Quadratic": 3,
+                "Cubic": 4,
+                "Murnaghan EOS": 4,
+                "Third-Order Birch-Murnaghan EOS": 4,
+            }[model]
             count = len(latitudes)
             if count < minimum:
                 raise ValueError(f"This range produces {count} points; {model} needs at least {minimum}.")
@@ -591,6 +597,7 @@ class GulpChatApp:
             evaluate, equation, parameters = fit_model(points, model, selected_fit_template, fit_path)
             with open(fit_path, "w", encoding="utf-8") as saved:
                 saved.write(f"model = {model}\n")
+                saved.write(f"equation = {equation}\n")
                 for name, value in parameters.items():
                     saved.write(f"{name} = {value:.12g}\n")
             self.root.after(0, self.finished, gin_path, uv_path, selected_fit_template,
@@ -620,12 +627,12 @@ class GulpChatApp:
     def bulk_modulus_gpa(model, fitted, points):
         """Return bulk modulus in GPa when the fitted model has a stable minimum."""
         conversion = 160.21766208  # eV/Angstrom^3 to GPa
-        if model == "Murnaghan EOS":
+        if model in ("Murnaghan EOS", "Third-Order Birch-Murnaghan EOS"):
             return fitted["B0"] * conversion if fitted["B0"] > 0 else None
         if model == "Quadratic" and fitted["a2"] > 0:
             v0 = -fitted["a1"] / (2 * fitted["a2"])
             return v0 * 2 * fitted["a2"] * conversion if v0 > 0 else None
-        if model == "Third order":
+        if model == "Cubic":
             a, b, c = fitted["A"], fitted["B"], fitted["C"]
             volumes = [volume for volume, _energy in points]
             if not volumes:

@@ -1,0 +1,18 @@
+# Gnuplot third-order Birch-Murnaghan equation-of-state fit.
+# Initial guesses are calculated from the active DATA_FILE by the application.
+# B0 is in eV/A^3 because the UV table stores cell energy (eV/cell) and volume (A^3/cell).
+set terminal pngcairo enhanced size 900,520 background rgb 'white'
+set output 'OUTPUT_FILE'
+set title 'Third-order Birch-Murnaghan equation of state'
+set xlabel 'Volume (Angstrom^3)'
+set ylabel 'Energy (eV/unit cell)'
+set grid
+bm3(x) = E0 + (9.0/16.0)*B0*V0 * ((((V0/x)**(2.0/3.0))-1.0)**3 * Bp + ((((V0/x)**(2.0/3.0))-1.0)**2) * (6.0 - 4.0*(V0/x)**(2.0/3.0)))
+E0 = INITIAL_E0
+V0 = INITIAL_V0
+B0 = INITIAL_B0
+Bp = INITIAL_BP
+fit bm3(x) 'DATA_FILE' using 2:3 via E0,V0,B0,Bp
+set label 1 sprintf('E0=%.15f, V0=%.15f, B0=%.15f, Bp=%.15f', E0, V0, B0, Bp) at graph 0.03,0.95
+plot 'DATA_FILE' using 2:3 with points pointtype 7 pointsize 1.3 linecolor rgb '#126213' title 'Data', bm3(x) with lines linecolor rgb '#dc2626' title 'Fit'
+unset output

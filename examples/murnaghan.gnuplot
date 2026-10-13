@@ -4,8 +4,8 @@ V0 = 74.5
 B0 = 0.5
 Bp = 4.0
 
-# 2. Define the Murnaghan EOS function (Column 2 is Volume, Column 3 is Energy)
-murn(x) = E0 + (B0 * x / Bp) * (((V0 / x)**Bp) / (Bp - 1.0) + 1.0) - (V0 * B0) / (Bp - 1.0)
+# 2. Corrected Murnaghan EOS energy function
+murn(x) = E0 + (V0 * B0 / Bp) * (((V0 / x)**Bp) / (Bp - 1.0) + (x / V0) - (1.0 / (Bp - 1.0)))
 
 # 3. Perform the non-linear least-squares fit
 fit murn(x) 'uv.txt' u 2:3 via E0, V0, B0, Bp

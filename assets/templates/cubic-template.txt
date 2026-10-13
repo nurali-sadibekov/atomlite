@@ -1,7 +1,7 @@
-# Gnuplot third-order polynomial fit. DATA_FILE and OUTPUT_FILE are substituted per run.
+# Gnuplot cubic polynomial fit. DATA_FILE and OUTPUT_FILE are substituted per run.
 set terminal pngcairo enhanced size 900,520 background rgb 'white'
 set output 'OUTPUT_FILE'
-set title 'Third-order fit: energy vs volume'
+set title 'Cubic fit: energy vs volume'
 set xlabel 'Volume (Angstrom^3)'
 set ylabel 'Energy (eV/unit cell)'
 set grid

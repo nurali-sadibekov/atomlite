@@ -47,11 +47,13 @@ OXYGEN_SITES = (
     "0.000000   0.500000   0.000000",
     "0.000000   0.000000   0.500000",
 )
+# Ordered from most to least scientifically appropriate for E-V curves.
 FIT_TEMPLATES = {
-    "Linear": ASSETS_DIR / "templates" / "linear-template.txt",
-    "Quadratic": ASSETS_DIR / "templates" / "quadratic-template.txt",
-    "Third order": ASSETS_DIR / "templates" / "third-order-template.txt",
+    "Third-Order Birch-Murnaghan EOS": ASSETS_DIR / "templates" / "birch-murnaghan-template.txt",
     "Murnaghan EOS": ASSETS_DIR / "templates" / "murnaghan-template.txt",
+    "Cubic": ASSETS_DIR / "templates" / "cubic-template.txt",
+    "Quadratic": ASSETS_DIR / "templates" / "quadratic-template.txt",
+    "Linear": ASSETS_DIR / "templates" / "linear-template.txt",
 }
 
 

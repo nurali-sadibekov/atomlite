@@ -183,6 +183,18 @@ def _murnaghan_energy(volume, e0, v0, b0, bp):
     except (OverflowError, ZeroDivisionError):
         return float("inf")
 
+def _birch_murnaghan_energy(volume, e0, v0, b0, bp):
+    if volume <= 0 or v0 <= 0:
+        return float("inf")
+    try:
+        eta = (v0 / volume) ** (2.0 / 3.0)
+        strain = eta - 1.0
+        return e0 + (9.0 / 16.0) * b0 * v0 * (
+            strain**3 * bp + strain**2 * (6.0 - 4.0 * eta)
+        )
+    except (OverflowError, ZeroDivisionError):
+        return float("inf")
+
 def _solve_linear(matrix, rhs):
     matrix = [row[:] + [value] for row, value in zip(matrix, rhs)]
     size = len(rhs)
@@ -199,10 +211,10 @@ def _solve_linear(matrix, rhs):
                 matrix[row] = [matrix[row][col] - factor * matrix[pivot][col] for col in range(size + 1)]
     return [matrix[row][-1] for row in range(size)]
 
-def _fit_murnaghan(points, initial):
+def _fit_eos(points, initial, energy_function, avoid_unit_pressure_derivative=False):
     params = list(initial)
     for _ in range(120):
-        residual = [y - _murnaghan_energy(x, *params) for x, y in points]
+        residual = [y - energy_function(x, *params) for x, y in points]
         jacobian = []
         for x, _ in points:
             row = []
@@ -211,7 +223,7 @@ def _fit_murnaghan(points, initial):
                 plus, minus = params.copy(), params.copy()
                 plus[index] += delta
                 minus[index] -= delta
-                row.append((_murnaghan_energy(x, *plus) - _murnaghan_energy(x, *minus)) / (2 * delta))
+                row.append((energy_function(x, *plus) - energy_function(x, *minus)) / (2 * delta))
             jacobian.append(row)
         normal = [[sum(row[i] * row[j] for row in jacobian) for j in range(4)] for i in range(4)]
         rhs = [sum(row[i] * r for row, r in zip(jacobian, residual)) for i in range(4)]
@@ -223,8 +235,11 @@ def _fit_murnaghan(points, initial):
         factor = 1.0
         for _attempt in range(16):
             candidate = [p + factor*d for p, d in zip(params, delta)]
-            if candidate[2] > 0 and candidate[3] > 0 and abs(candidate[3] - 1) > 1e-5:
-                error = sum((y - _murnaghan_energy(x, *candidate))**2 for x, y in points)
+            valid = (candidate[1] > 0 and candidate[2] > 0 and candidate[3] > 0)
+            if avoid_unit_pressure_derivative:
+                valid = valid and abs(candidate[3] - 1) > 1e-5
+            if valid:
+                error = sum((y - energy_function(x, *candidate))**2 for x, y in points)
                 if error < old_error:
                     params = candidate
                     break
@@ -257,7 +272,7 @@ def fit_model(points, model, template_path, fit_path):
         params = {"slope": a, "intercept": b}
         equation = f"E(V) = {_format_decimal(a)} V {_format_decimal(b, signed=True)}"
         evaluate = lambda x: a*x + b
-    elif model in ("Quadratic", "Third order"):
+    elif model in ("Quadratic", "Cubic"):
         degree = 2 if model == "Quadratic" else 3
         coefficients = polynomial_fit(points, degree)
         if model == "Quadratic":
@@ -270,15 +285,21 @@ def fit_model(points, model, template_path, fit_path):
         equation = "E(V) = " + " ".join(terms)
         evaluate = lambda x: sum(coefficient * x ** (degree-index)
                                  for index, coefficient in enumerate(coefficients))
-    else:
+    elif model in ("Murnaghan EOS", "Third-Order Birch-Murnaghan EOS"):
         e0, v0, b0, bp = data_initial_guesses(points)
-        # Use a stable finite-difference Gauss-Newton fit for E0,V0,B0,Bp.
-        numeric_params = _fit_murnaghan(points, [e0, v0, b0, bp])
+        energy_function = (_murnaghan_energy if model == "Murnaghan EOS"
+                           else _birch_murnaghan_energy)
+        numeric_params = _fit_eos(
+            points, [e0, v0, b0, bp], energy_function,
+            avoid_unit_pressure_derivative=(model == "Murnaghan EOS"),
+        )
         e0, v0, b0, bp = numeric_params
         equation = (f"E0={_format_decimal(e0)}, V0={_format_decimal(v0)}, "
                     f"B0={_format_decimal(b0)}, Bp={_format_decimal(bp)}")
-        evaluate = lambda x: _murnaghan_energy(x, *numeric_params)
+        evaluate = lambda x: energy_function(x, *numeric_params)
         params = dict(zip(("E0", "V0", "B0", "Bp"), numeric_params))
+    else:
+        raise ValueError(f"Unsupported fit model: {model}")
     return evaluate, equation, params
 
 def get_template_initial_values(template_path, data_path, model):
@@ -286,14 +307,14 @@ def get_template_initial_values(template_path, data_path, model):
     if not os.path.exists(template_path):
         raise FileNotFoundError(f"Fit template not found: {template_path}")
     _, points = render_plot(GNUPLOT_TEMPLATE, data_path)
-    if model == "Murnaghan EOS":
+    if model in ("Murnaghan EOS", "Third-Order Birch-Murnaghan EOS"):
         values = dict(zip(("E0", "V0", "B0", "Bp"), data_initial_guesses(points)))
     else:
         _, _, fitted = fit_model(points, model, template_path, "")
         names = {
             "Linear": ("M", "C"),
             "Quadratic": ("A", "B", "C"),
-            "Third order": ("A", "B", "C", "D"),
+            "Cubic": ("A", "B", "C", "D"),
         }[model]
         if model == "Quadratic":
             values = {"A": fitted["a2"], "B": fitted["a1"], "C": fitted["a0"]}
